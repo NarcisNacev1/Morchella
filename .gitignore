@@ -37,3 +37,5 @@ __screenshots__/
 
 # Firebase service account keys (never commit!)
 *.json
+.firebase/
+.firebase
