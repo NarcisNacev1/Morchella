@@ -37,5 +37,11 @@ __screenshots__/
 
 # Firebase service account keys (never commit!)
 *.json
+
+# But keep Firebase config files tracked
+!firebase.json
+!database.rules.json
+!.firebaserc
+
+# Firebase local cache
 .firebase/
-.firebase
