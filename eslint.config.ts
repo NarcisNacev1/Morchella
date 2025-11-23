@@ -56,7 +56,11 @@ export default defineConfigWithVueTs(
             'no-trailing-spaces': ['error', { skipBlankLines: false, ignoreComments: false }],
             'comma-dangle': 'error',
             'vue/no-unused-vars': 'error',
-            'vue/multi-word-component-names': 'off'
+            'vue/multi-word-component-names': 'off',
+
+            '@typescript-eslint/no-implicit-any-catch': 'off',
+            '@typescript-eslint/no-unsafe-assignment': 'off',
+            '@typescript-eslint/no-explicit-any': 'warn'
         }
     }
 );

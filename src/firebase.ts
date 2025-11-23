@@ -2,13 +2,14 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-    apiKey: 'AIzaSyDd-XgGK9KnLP1Vf3QCXCgy58LPL4CwnE4',
-    authDomain: 'morchella-7a59d.firebaseapp.com',
-    projectId: 'morchella-7a59d',
-    storageBucket: 'morchella-7a59d.firebasestorage.app',
-    messagingSenderId: '264217185412',
-    appId: '1:264217185412:web:a517fbddb85dc619eb86d1',
-    measurementId: 'G-5MFR4CNG2X'
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+    databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+    appId: import.meta.env.VITE_FIREBASE_APP_ID,
+    measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 const firebaseApp = initializeApp(firebaseConfig);

@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import AuthLayout from '@/components/AuthLayout.vue';
+import { useAuthStore } from '@/stores/useAuthStore.ts';
 
-const handleSendResetLink = () => {
-    console.log('Sending password reset link...');
-};
+const authStore = useAuthStore();
 </script>
 
 <template>
@@ -11,12 +10,20 @@ const handleSendResetLink = () => {
         <template #fields>
             <div class="input-group">
                 <label for="email">Email</label>
-                <input id="email" type="email" placeholder="Enter your email address" required />
+                <input
+                    id="email"
+                    type="email"
+                    v-model="authStore.form.email"
+                    placeholder="Enter your email address"
+                    required
+                />
             </div>
         </template>
 
         <template #actions>
-            <button class="signin-button" @click="handleSendResetLink">Send Reset Link</button>
+            <button class="signin-button" @click="authStore.handleResetPassword">
+                Send Reset Link
+            </button>
         </template>
 
         <template #footer>

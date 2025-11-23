@@ -1,8 +1,18 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router';
+import { useAuthStore } from '@/stores/useAuthStore.ts';
+import { onMounted } from 'vue';
+import ToastNotifications from '@/components/ToastNotifications.vue';
+
+const authStore = useAuthStore();
+
+onMounted(() => {
+    authStore.initAuth();
+});
 </script>
 
 <template>
+    <ToastNotifications />
     <div class="router">
         <RouterView v-slot="{ Component }">
             <transition name="fade" mode="out-in">

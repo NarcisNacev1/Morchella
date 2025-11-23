@@ -2,10 +2,11 @@
 import { nextTick, onMounted } from 'vue';
 import { useLoginAnimations } from '@/stores/useLoginAnimations.ts';
 import './../assets/login.css';
+import { useAuthStore } from '@/stores/useAuthStore.ts';
 
 interface Props {
-    isRegister?: boolean
-    title?: string
+    isRegister?: boolean;
+    title?: string;
 }
 
 withDefaults(defineProps<Props>(), {
@@ -14,6 +15,7 @@ withDefaults(defineProps<Props>(), {
 });
 
 const loginAnimations = useLoginAnimations();
+const authStore = useAuthStore();
 
 onMounted(async () => {
     await nextTick();
@@ -25,7 +27,7 @@ onMounted(async () => {
     <div
         :ref="
             (el) => {
-                if (el) loginAnimations.container = el as HTMLElement
+                if (el) loginAnimations.container = el as HTMLElement;
             }
         "
         class="login-container"
@@ -36,7 +38,7 @@ onMounted(async () => {
             :key="index"
             :ref="
                 (el) => {
-                    if (el) loginAnimations.elementRefs[index] = el as HTMLElement
+                    if (el) loginAnimations.elementRefs[index] = el as HTMLElement;
                 }
             "
             class="floating-element"
@@ -67,6 +69,7 @@ onMounted(async () => {
                                 id="fullName"
                                 type="text"
                                 placeholder="Enter your full name"
+                                v-model="authStore.form.fullName"
                                 required
                             />
                         </div>
@@ -77,6 +80,7 @@ onMounted(async () => {
                                 id="email"
                                 type="email"
                                 placeholder="Enter your email"
+                                v-model="authStore.form.email"
                                 required
                             />
                         </div>
@@ -89,6 +93,7 @@ onMounted(async () => {
                                 :placeholder="
                                     isRegister ? 'Create a password' : 'Enter your password'
                                 "
+                                v-model="authStore.form.password"
                                 required
                             />
                         </div>
@@ -99,6 +104,7 @@ onMounted(async () => {
                                 id="confirmPassword"
                                 type="password"
                                 placeholder="Confirm your password"
+                                v-model="authStore.form.confirmPassword"
                                 required
                             />
                         </div>
@@ -106,15 +112,28 @@ onMounted(async () => {
                 </slot>
 
                 <slot name="actions">
-                    <button class="signin-button">
-                        {{ isRegister ? 'Create Account' : 'Sign in' }}
+                    <button
+                        class="signin-button"
+                        @click="isRegister ? authStore.handleRegister() : authStore.handleLogin()"
+                        :disabled="authStore.isLoading"
+                    >
+                        <span v-if="authStore.isLoading">
+                            {{ isRegister ? 'Creating Account...' : 'Signing in...' }}
+                        </span>
+                        <span v-else>
+                            {{ isRegister ? 'Create Account' : 'Sign in' }}
+                        </span>
                     </button>
 
                     <div v-if="!isRegister" class="divider">
                         <span class="divider-text">or continue with</span>
                     </div>
 
-                    <button class="google-button">
+                    <button
+                        class="google-button"
+                        @click="authStore.handleGoogleLogin()"
+                        :disabled="authStore.isLoading"
+                    >
                         <i class="ti ti-brand-google-filled"></i>
                         Google
                     </button>
@@ -136,3 +155,28 @@ onMounted(async () => {
         </div>
     </div>
 </template>
+
+<style scoped>
+.signin-button:disabled,
+.google-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.signin-button:disabled {
+    position: relative;
+    color: transparent;
+}
+
+.signin-button:disabled span:not(.loading-text) {
+    visibility: hidden;
+}
+
+.loading-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: inherit;
+}
+</style>

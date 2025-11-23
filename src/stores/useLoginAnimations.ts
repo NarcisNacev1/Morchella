@@ -95,7 +95,7 @@ export const useLoginAnimations = defineStore('loginAnimations', () => {
     };
 
     const startAnimations = () => {
-        backgroundElements.value.forEach((element, index) => {
+        backgroundElements.value.forEach((e, index) => {
             const el = elementRefs.value[index];
             if (el) {
                 gsap.to(el, {
