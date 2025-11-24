@@ -16,48 +16,6 @@
   transition: transform 0.3s ease-out;
 }
 
-.glass-background {
-  border-radius: 24px;
-  position: relative;
-  z-index: 2;
-  padding: 40px;
-  width: 85.375rem;
-  height: 48rem;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  overflow: hidden;
-}
-
-.glass-background::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-  transition: left 0.6s ease;
-}
-
-.glass-background:hover::before {
-  left: 100%;
-}
-
-.glass-background:hover {
-  box-shadow: 0 15px 45px rgba(255, 132, 0, 0.2),
-  0 0 60px rgba(255, 132, 0, 0.1),
-  inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  transform: translateY(-5px) scale(1.02);
-}
-
-.glass-background,
-.login-form {
-  outline: none;
-}
-
 .login-form {
   z-index: 100;
   border-radius: 24px;
@@ -352,16 +310,7 @@
   transform: translateY(-10px) scale(1.02);
 }
 
-.glass-background:focus,
-.login-form:focus {
-  outline: none !important;
-}
-
 @media (max-width: 768px) {
-  .glass-background {
-    padding: 30px;
-  }
-
   .login-form {
     padding: 2.5rem 2rem;
     width: 100%;
