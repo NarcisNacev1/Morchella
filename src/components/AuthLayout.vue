@@ -11,7 +11,7 @@ interface Props {
 
 withDefaults(defineProps<Props>(), {
     isRegister: false,
-    title: '',
+    title: ''
 });
 
 const loginAnimations = useLoginAnimations();

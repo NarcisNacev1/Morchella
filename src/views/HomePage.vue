@@ -3,6 +3,7 @@
         <Navbar />
         <ProductShowcase @product-change="handleProductChange" />
         <ModelViewer :model-path="currentModelPath" />
+        <InfoCards :current-model-path="currentModelPath" />
     </div>
 </template>
 
@@ -11,6 +12,7 @@ import { ref } from 'vue';
 import Navbar from '@/components/NavBar.vue';
 import ProductShowcase from '@/components/ProductShowcase.vue';
 import ModelViewer from '@/components/ModelViewer.vue';
+import InfoCards from '@/components/InfoCards.vue';
 
 const currentModelPath = ref<string>('/models/morel/scene.gltf');
 

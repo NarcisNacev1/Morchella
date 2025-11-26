@@ -10,8 +10,6 @@
                 :key="product.id"
                 class="menu-item"
                 :class="{ active: activeIndex === index }"
-                @click="setActiveProduct(index)"
-                @mouseenter="setActiveProduct(index)"
             >
                 <div class="menu-content">
                     <span class="product-name">{{ product.name }}</span>
@@ -93,7 +91,7 @@ const autoSwitchToNext = () => {
 
 onMounted(() => {
     emit('productChange', products.value[0]!.modelPath);
-    autoSwitchInterval = globalThis.setInterval(autoSwitchToNext, 5000);
+    autoSwitchInterval = globalThis.setInterval(autoSwitchToNext, 9000);
 });
 
 onUnmounted(() => {
