@@ -24,7 +24,7 @@ onMounted(() => {
 
 <style scoped>
 .router {
-    background-color: #ffa500;
+    background: radial-gradient(circle, #d9ccbe 0%, #a4a199 100%);
     min-height: 100vh;
     width: 100%;
 }
