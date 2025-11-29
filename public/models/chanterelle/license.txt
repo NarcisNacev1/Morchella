@@ -1,0 +1,11 @@
+Model Information:
+* title:	Cantharellus formosus mushroom
+* source:	https://sketchfab.com/3d-models/cantharellus-formosus-mushroom-81b06e5fb337405b9d277048a39758f8
+* author:	JevinJones (https://sketchfab.com/JevinJ)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Cantharellus formosus mushroom" (https://sketchfab.com/3d-models/cantharellus-formosus-mushroom-81b06e5fb337405b9d277048a39758f8) by JevinJones (https://sketchfab.com/JevinJ) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

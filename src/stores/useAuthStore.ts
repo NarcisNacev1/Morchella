@@ -254,7 +254,7 @@ export const useAuthStore = defineStore('auth', () => {
 
         if (result.success) {
             errorHandler.showToast('Welcome back! Login successful.', 'success');
-            router.push('/dashboard');
+            router.push('/homepage');
         } else {
             errorHandler.showToast(result.error || 'Login failed. Please try again.');
         }
@@ -267,7 +267,7 @@ export const useAuthStore = defineStore('auth', () => {
 
         if (result.success) {
             errorHandler.showToast('Successfully signed in with Google!', 'success');
-            router.push('/dashboard');
+            router.push('/homepage');
         } else {
             errorHandler.showToast(result.error || 'Google sign-in failed.');
         }
@@ -286,7 +286,7 @@ export const useAuthStore = defineStore('auth', () => {
 
         if (result.success) {
             errorHandler.showToast('Account created successfully! Welcome!', 'success');
-            router.push('/dashboard');
+            router.push('/homepage');
         } else {
             errorHandler.showToast(result.error || 'Registration failed. Please try again.');
         }

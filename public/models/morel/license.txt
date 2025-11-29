@@ -1,0 +1,11 @@
+Model Information:
+* title:	Morel Magic
+* source:	https://sketchfab.com/3d-models/morel-magic-e2410fb3c5214c3f82c4242d8b968bb1
+* author:	ALTEREGO (v.a.c.u.u.m.) (https://sketchfab.com/v.a.c.u.u.m.)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Morel Magic" (https://sketchfab.com/3d-models/morel-magic-e2410fb3c5214c3f82c4242d8b968bb1) by ALTEREGO (v.a.c.u.u.m.) (https://sketchfab.com/v.a.c.u.u.m.) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
