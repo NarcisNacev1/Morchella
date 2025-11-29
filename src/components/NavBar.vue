@@ -1,31 +1,56 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { onMounted, ref } from 'vue';
+import { useAuthStore } from '@/stores/useAuthStore.ts';
+
+const authStore = useAuthStore();
+
+const navbar = ref<HTMLElement>();
+
+onMounted(() => {
+    if (navbar.value) {
+        setTimeout(() => {
+            navbar.value?.classList.add('navbar-loaded');
+        }, 100);
+    }
+});
+</script>
 
 <template>
-    <nav class="navbar">
+    <nav class="navbar" ref="navbar">
         <div class="navbar-container">
             <div class="navbar-logo">
-                <span class="logo-text">MORCHELLA</span>
+                <span class="logo-text">
+                    <span
+                        class="letter"
+                        v-for="(letter, index) in 'MORCHELLA'"
+                        :key="index"
+                        :data-letter="letter"
+                    >
+                        {{ letter }}
+                    </span>
+                </span>
             </div>
 
             <div class="navbar-center">
                 <div class="nav-items">
                     <div class="nav-item dropdown-container">
                         <span class="nav-link">Products</span>
-                        <i class="ti ti-chevron-down dropdown-icon"></i>
-                        <div class="dropdown-menu">
-                            <a href="#" class="dropdown-item">Product 1</a>
-                            <a href="#" class="dropdown-item">Product 2</a>
-                            <a href="#" class="dropdown-item">Product 3</a>
-                            <a href="#" class="dropdown-item">Product 4</a>
-                        </div>
+                        <span class="nav-underline"></span>
                     </div>
 
                     <a href="#" class="nav-item">
                         <span class="nav-link">About</span>
+                        <span class="nav-underline"></span>
                     </a>
 
-                    <a href="#" class="nav-item">
+                    <a class="nav-item">
                         <span class="nav-link">Contacts</span>
+                        <span class="nav-underline"></span>
+                    </a>
+
+                    <a href="#" class="nav-item" @click="authStore.logout()">
+                        <span class="nav-link">Log Out</span>
+                        <span class="nav-underline"></span>
                     </a>
                 </div>
             </div>
@@ -48,6 +73,14 @@
     align-items: center;
     position: sticky;
     z-index: 1000;
+    transform: translateY(-100%);
+    opacity: 0;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar-loaded {
+    transform: translateY(0);
+    opacity: 1;
 }
 
 .navbar-container {
@@ -67,6 +100,51 @@
     font-size: 1.8rem;
     font-weight: 700;
     text-decoration: none;
+    display: inline-flex;
+    perspective: 500px;
+}
+
+.letter {
+    display: inline-block;
+    position: relative;
+    transform-style: preserve-3d;
+    transition:
+        color 0.3s ease,
+        transform 0.3s ease;
+    transform-origin: bottom;
+}
+
+.logo-text:hover .letter {
+    color: #8f867b;
+    transform: scale(1.1);
+}
+
+.logo-text:hover .letter:nth-child(1) {
+    transition-delay: 0s;
+}
+.logo-text:hover .letter:nth-child(2) {
+    transition-delay: 0.05s;
+}
+.logo-text:hover .letter:nth-child(3) {
+    transition-delay: 0.1s;
+}
+.logo-text:hover .letter:nth-child(4) {
+    transition-delay: 0.15s;
+}
+.logo-text:hover .letter:nth-child(5) {
+    transition-delay: 0.2s;
+}
+.logo-text:hover .letter:nth-child(6) {
+    transition-delay: 0.25s;
+}
+.logo-text:hover .letter:nth-child(7) {
+    transition-delay: 0.3s;
+}
+.logo-text:hover .letter:nth-child(8) {
+    transition-delay: 0.35s;
+}
+.logo-text:hover .letter:nth-child(9) {
+    transition-delay: 0.4s;
 }
 
 .navbar-center {
@@ -88,68 +166,33 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    padding: 0.5rem 0;
 }
 
 .nav-link {
     font-size: 1.2rem;
     font-weight: 700;
     color: #333;
-    padding: 0.5rem 0;
     transition: all 0.3s ease;
+}
+
+.nav-underline {
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #333;
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-origin: left;
+}
+
+.nav-item:hover .nav-underline {
+    width: 100%;
 }
 
 .nav-item:hover .nav-link {
-    text-decoration: underline;
-    text-underline-offset: 4px;
-    text-decoration-thickness: 2px;
-}
-
-.dropdown-icon {
-    font-size: 1.4rem;
-    transition: transform 0.3s ease;
-}
-
-.dropdown-container:hover .dropdown-icon {
-    transform: rotate(180deg);
-}
-
-.dropdown-container {
-    position: relative;
-}
-
-.dropdown-menu {
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: white;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    padding: 0.5rem 0;
-    min-width: 180px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-}
-
-.dropdown-container:hover .dropdown-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateX(-50%) translateY(5px);
-}
-
-.dropdown-item {
-    display: block;
-    padding: 0.75rem 1.5rem;
     text-decoration: none;
-    color: #333;
-    font-size: 0.9rem;
-    transition: background-color 0.3s ease;
-}
-
-.dropdown-item:hover {
-    background-color: #f8f9fa;
 }
 
 .navbar-right {
@@ -201,11 +244,6 @@
     .submit-request-btn {
         padding: 0.75rem 1.5rem;
         font-size: 1rem;
-    }
-
-    .dropdown-icon,
-    .mail-icon {
-        font-size: 1.2rem;
     }
 }
 </style>

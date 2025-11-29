@@ -91,7 +91,7 @@ const autoSwitchToNext = () => {
 
 onMounted(() => {
     emit('productChange', products.value[0]!.modelPath);
-    autoSwitchInterval = globalThis.setInterval(autoSwitchToNext, 9000);
+    autoSwitchInterval = globalThis.setInterval(autoSwitchToNext, 8000);
 });
 
 onUnmounted(() => {
@@ -102,7 +102,7 @@ onUnmounted(() => {
 <style scoped>
 .product-showcase {
     position: relative;
-    height: calc(100vh - 90px);
+    height: 100%;
     display: flex;
     align-items: center;
 }
@@ -115,6 +115,20 @@ onUnmounted(() => {
     flex-direction: column;
     gap: 1.5rem;
     z-index: 100;
+    animation: slideInFromLeft 1s ease-out 0.3s forwards;
+    opacity: 0;
+    transform: translateX(-100px);
+}
+
+@keyframes slideInFromLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-100px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .moving-arrow {
@@ -136,6 +150,33 @@ onUnmounted(() => {
     display: flex;
     align-items: center;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: slideInMenuItem 0.8s ease-out forwards;
+    opacity: 0;
+    transform: translateX(-50px);
+}
+
+.menu-item:nth-child(2) {
+    animation-delay: 0.5s;
+}
+.menu-item:nth-child(3) {
+    animation-delay: 0.7s;
+}
+.menu-item:nth-child(4) {
+    animation-delay: 0.9s;
+}
+.menu-item:nth-child(5) {
+    animation-delay: 1.1s;
+}
+
+@keyframes slideInMenuItem {
+    0% {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
 }
 
 .menu-content {
@@ -159,15 +200,16 @@ onUnmounted(() => {
 
 .title-display {
     position: absolute;
-    bottom: 2rem;
-    left: 4rem;
     z-index: 90;
+    padding-bottom: 4rem;
+    padding-top: 50rem;
+    padding-left: 4rem;
 }
 
 .product-title {
     font-size: 8rem;
     font-weight: 900;
-    color: #fc4702;
+    color: #f5e9dd;
     margin: 0;
     text-transform: uppercase;
     letter-spacing: 2px;

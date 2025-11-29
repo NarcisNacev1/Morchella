@@ -1,9 +1,11 @@
 <template>
-    <div class="homepage">
-        <Navbar />
-        <ProductShowcase @product-change="handleProductChange" />
-        <ModelViewer :model-path="currentModelPath" />
-        <InfoCards :current-model-path="currentModelPath" />
+    <div class="container">
+        <div class="content">
+            <Navbar />
+            <ProductShowcase @product-change="handleProductChange" />
+            <ModelViewer :model-path="currentModelPath" />
+            <InfoCards :current-model-path="currentModelPath" />
+        </div>
     </div>
 </template>
 
@@ -22,9 +24,21 @@ const handleProductChange = (modelPath: string) => {
 </script>
 
 <style scoped>
-.homepage {
+.container {
+    width: 100vw;
     height: 100vh;
     overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+.content {
+    width: 100%;
+    height: 100%;
     position: relative;
+    transform-origin: top left;
+    max-width: 1920px;
+    max-height: 1100px;
 }
 </style>

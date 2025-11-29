@@ -2,12 +2,13 @@
     <div class="info-cards-container">
         <div
             v-for="card in currentModelCards"
-            :key="card.id"
+            :key="`${currentModelPath}-${card.id}`"
             class="info-card"
             :style="{
                 left: card.x + 'px',
                 top: card.y + 'px',
             }"
+            :data-card-id="`${currentModelPath}-${card.id}`"
         >
             <h3 class="card-title">
                 {{ card.title }}
@@ -18,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { computed, nextTick, onBeforeUnmount, watch } from 'vue';
 import gsap from 'gsap';
 
 interface InfoCard {
@@ -27,6 +28,7 @@ interface InfoCard {
     content: string;
     x: number;
     y: number;
+    slideFrom: 'left' | 'right';
 }
 
 interface Props {
@@ -35,130 +37,171 @@ interface Props {
 
 const props = defineProps<Props>();
 
-// Define card data for each model with manual x,y coordinates
+let animations: gsap.core.Tween[] = [];
+
 const modelCards: Record<string, InfoCard[]> = {
     '/models/morel/scene.gltf': [
         {
             id: 1,
-            title: 'Premium Quality',
-            content:
-                'Handcrafted with premium materials and attention to detail that ensures longevity and exceptional performance.',
+            title: 'RARE',
+            content: 'Spring delicacy',
             x: 650,
-            y: 280
+            y: 280,
+            slideFrom: 'left'
         },
         {
             id: 2,
-            title: 'Innovative Design',
-            content:
-                'Features cutting-edge technology and ergonomic design for superior comfort and user experience.',
+            title: 'NUTTY',
+            content: 'Earthy flavor',
             x: 1000,
-            y: 700
+            y: 450,
+            slideFrom: 'right'
         }
     ],
     '/models/chanterelle/scene.gltf': [
         {
             id: 1,
-            title: 'Crystal Clear Audio',
-            content:
-                'Experience immersive sound quality with noise cancellation and high-fidelity audio drivers.',
+            title: 'GOLD',
+            content: 'Forest treasure',
             x: 550,
-            y: 280
+            y: 280,
+            slideFrom: 'left'
         },
         {
             id: 3,
-            title: 'Wireless Freedom',
-            content:
-                'Up to 30 hours of battery life with quick charge technology and seamless connectivity.',
+            title: 'AROMA',
+            content: 'Fruity notes',
             x: 1150,
-            y: 240
+            y: 240,
+            slideFrom: 'right'
         }
     ],
     '/models/porcini/scene.gltf': [
         {
             id: 1,
-            title: 'Premium Build',
-            content:
-                'Crafted with precision and high-quality materials for exceptional durability.',
+            title: 'KING',
+            content: 'Rich umami',
             x: 550,
-            y: 250
+            y: 250,
+            slideFrom: 'left'
         },
         {
             id: 2,
-            title: 'Smart Features',
-            content:
-                'Integrated with smart technology for enhanced functionality and user experience.',
+            title: 'HEARTY',
+            content: 'Meaty texture',
             x: 1200,
-            y: 450
+            y: 200,
+            slideFrom: 'right'
         },
         {
             id: 3,
-            title: 'Advanced Technology',
-            content:
-                'Integrated with smart technology for enhanced functionality and user experience.',
+            title: 'CLASSIC',
+            content: 'Italian cuisine',
             x: 730,
-            y: 650
+            y: 300,
+            slideFrom: 'left'
         }
     ],
     '/models/amanita/scene.gltf': [
         {
             id: 1,
-            title: 'Premium Build',
-            content:
-                'Crafted with precision and high-quality materials for exceptional durability.',
+            title: 'ICON',
+            content: 'Red cap',
             x: 1100,
-            y: 150
+            y: 150,
+            slideFrom: 'right'
         },
         {
             id: 2,
-            title: 'Smart Features',
-            content:
-                'Integrated with smart technology for enhanced functionality and user experience.',
+            title: 'MYTH',
+            content: 'Fairy tales',
             x: 650,
-            y: 500
+            y: 400,
+            slideFrom: 'left'
         }
     ]
 };
 
-// Compute current model cards based on active model path
 const currentModelCards = computed(() => {
     return modelCards[props.currentModelPath] || [];
 });
 
-// Start floating animations
+const killAllAnimations = () => {
+    animations.forEach((anim) => anim.kill());
+    animations = [];
+    gsap.killTweensOf('.info-card');
+};
+
 const startFloatingAnimations = () => {
+    killAllAnimations();
+
     const cards = document.querySelectorAll('.info-card');
 
     cards.forEach((card, index) => {
-        // Floating up/down animation
-        gsap.to(card, {
+        const cardElement = card as HTMLElement;
+        const cardId = cardElement.dataset.cardId;
+
+        const cardData = currentModelCards.value.find(
+            (c) => `${props.currentModelPath}-${c.id}` === cardId
+        );
+
+        if (cardData) {
+            const slideDistance = cardData.slideFrom === 'left' ? -100 : 100;
+
+            gsap.fromTo(
+                card,
+                {
+                    x: slideDistance,
+                    opacity: 0
+                },
+                {
+                    x: 0,
+                    opacity: 1,
+                    duration: 0.8,
+                    ease: 'power2.out',
+                    delay: index * 0.15
+                }
+            );
+        }
+
+        const floatAnim = gsap.to(card, {
             y: '+=15',
             duration: 2 + Math.random() * 2,
             repeat: -1,
             yoyo: true,
             ease: 'sine.inOut',
-            delay: index * 0.3
+            delay: 0.8 + index * 0.3
         });
+        animations.push(floatAnim);
 
-        // Subtle rotation animation
-        gsap.to(card, {
+        const rotateAnim = gsap.to(card, {
             rotation: 3,
             duration: 3 + Math.random() * 2,
             repeat: -1,
             yoyo: true,
             ease: 'sine.inOut',
-            delay: index * 0.2
+            delay: 0.8 + index * 0.2
         });
+        animations.push(rotateAnim);
     });
 };
 
-onMounted(() => {
-    // Start animations after a brief delay to ensure DOM is ready
-    setTimeout(startFloatingAnimations, 100);
+watch(
+    () => props.currentModelPath,
+    () => {
+        nextTick(() => {
+            startFloatingAnimations();
+        });
+    },
+    { immediate: true }
+);
+
+onBeforeUnmount(() => {
+    killAllAnimations();
 });
 </script>
 
 <style scoped>
-/* Info Cards Container */
 .info-cards-container {
     position: absolute;
     top: 0;
@@ -169,14 +212,13 @@ onMounted(() => {
     z-index: 10;
 }
 
-/* Individual Info Card */
 .info-card {
-    position: absolute;
-    max-width: 150px;
-    min-height: 150px;
+    position: relative;
+    max-width: 130px;
+    min-height: 130px;
     padding: 20px;
-    background: rgba(217, 204, 190, 0.7); /* #d9ccbe with transparency */
-    backdrop-filter: blur(4px); /* stronger blur for glass effect */
+    background: rgba(245, 233, 221, 0.5);
+    backdrop-filter: blur(4px);
     border-radius: 16px;
     border: 1px solid rgba(185, 178, 167, 0.3);
     box-shadow:
@@ -184,50 +226,31 @@ onMounted(() => {
         0 2px 8px rgba(0, 0, 0, 0.1);
     pointer-events: auto;
     transition: all 0.3s ease;
-    animation: fadeInUp 0.6s ease-out;
     z-index: 1;
+    opacity: 0;
 }
 
-.info-card:hover {
-    transform: translateY(-2px);
-    box-shadow:
-        0 12px 40px rgba(0, 0, 0, 0.2),
-        0 4px 12px rgba(0, 0, 0, 0.12);
-    background: rgba(185, 178, 167, 0.95);
-}
-
-/* Card Title */
 .card-title {
     font-size: 1.1em;
     font-weight: 700;
-    margin: 0 0 12px 0;
-    color: #8a8376; /* Darker version of #B9B2A7 */
+    margin: 0 12px 12px 0;
+    color: rgba(245, 233, 221, 1);
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-    letter-spacing: -0.01em;
 }
 
-/* Card Content */
 .card-content {
     font-size: 0.9em;
     line-height: 1.5;
-    margin: 0;
-    color: #2c3e50;
-    font-weight: 400;
+    color: #a8a49c;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+
+    position: absolute;
+    bottom: 0;
+    left: 12px;
+    text-align: left;
 }
 
-/* Animation */
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Responsive Design */
 @media (max-width: 768px) {
     .info-card {
         max-width: 220px;

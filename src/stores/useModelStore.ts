@@ -7,10 +7,19 @@ export const useModelStore = defineStore('modelStore', () => {
     let scene: THREE.Scene;
     let camera: THREE.PerspectiveCamera;
     let renderer: THREE.WebGLRenderer;
-    let currentModel: THREE.Group | null = null;
     let animationFrameId: number;
 
     const modelContainer = ref<HTMLElement>();
+
+    const loadedModels: Map<string, THREE.Group> = new Map();
+    let currentModelPath: string | null = null;
+
+    const modelPaths = [
+        '/models/morel/scene.gltf',
+        '/models/chanterelle/scene.gltf',
+        '/models/porcini/scene.gltf',
+        '/models/amanita/scene.gltf'
+    ];
 
     const initScene = (container: HTMLElement | undefined) => {
         if (!container) {
@@ -33,7 +42,6 @@ export const useModelStore = defineStore('modelStore', () => {
         renderer.setPixelRatio(window.devicePixelRatio);
         container.appendChild(renderer.domElement);
 
-        // Lighting
         const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
         scene.add(ambientLight);
 
@@ -46,19 +54,15 @@ export const useModelStore = defineStore('modelStore', () => {
         scene.add(backLight);
     };
 
-    // Method 1: Center the entire model group (for morel and others)
     const centerModelMethod1 = (model: THREE.Group) => {
         const box = new THREE.Box3().setFromObject(model);
         const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
 
-        // Calculate the offset needed to center the model
         const offset = center.clone().multiplyScalar(-1);
 
-        // Apply the offset to center the model at world origin
         model.position.copy(offset);
 
-        // Scale the model to a consistent size
         const maxDim = Math.max(size.x, size.y, size.z);
         const targetSize = 2.5;
         const scale = targetSize / maxDim;
@@ -67,23 +71,17 @@ export const useModelStore = defineStore('modelStore', () => {
         return model;
     };
 
-    // Method 3: Center using a wrapper group (preserves textures)
     const centerModelMethod2 = (model: THREE.Group) => {
-        // Calculate the bounding box of the entire model
         const box = new THREE.Box3().setFromObject(model);
         const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
 
-        // Create a wrapper group
         const wrapper = new THREE.Group();
 
-        // Add the model to the wrapper
         wrapper.add(model);
 
-        // Offset the model within the wrapper to center it
         model.position.set(-center.x, -center.y, -center.z);
 
-        // Scale the wrapper to consistent size
         const maxDim = Math.max(size.x, size.y, size.z);
         const targetSize = 2.5;
         const scale = targetSize / maxDim;
@@ -92,74 +90,82 @@ export const useModelStore = defineStore('modelStore', () => {
         return wrapper;
     };
 
-    const loadModel = (path: string) => {
+    const preloadAllModels = () => {
         const loader = new GLTFLoader();
 
-        // Remove current model if exists
-        if (currentModel) {
-            scene.remove(currentModel);
-            currentModel.traverse((child) => {
-                if (child instanceof THREE.Mesh) {
-                    child.geometry.dispose();
-                    if (Array.isArray(child.material)) {
-                        child.material.forEach((material) => material.dispose());
+        modelPaths.forEach((path) => {
+            loader.load(
+                path,
+                (gltf) => {
+                    let model = gltf.scene;
+
+                    model.traverse((child) => {
+                        if (
+                            child instanceof THREE.Line ||
+                            child instanceof THREE.BoxHelper ||
+                            child.name.toLowerCase().includes('box') ||
+                            child.name.toLowerCase().includes('bounding') ||
+                            child.name.toLowerCase().includes('wireframe')
+                        ) {
+                            child.visible = false;
+                        }
+                    });
+
+                    model.rotation.set(0, 0, 0);
+                    model.scale.set(1, 1, 1);
+                    model.position.set(0, 0, 0);
+
+                    if (
+                        path.includes('chanterelle') ||
+                        path.includes('porcini') ||
+                        path.includes('amanita')
+                    ) {
+                        model = centerModelMethod2(model);
                     } else {
-                        child.material.dispose();
+                        model = centerModelMethod1(model);
                     }
+
+                    model.visible = false;
+
+                    loadedModels.set(path, model);
+
+                    scene.add(model);
+                },
+                undefined,
+                (error) => {
+                    console.error(`Error preloading model from ${path}:`, error);
                 }
-            });
-            currentModel = null;
+            );
+        });
+    };
+
+    const switchToModel = (path: string) => {
+        if (currentModelPath && loadedModels.has(currentModelPath)) {
+            const currentModel = loadedModels.get(currentModelPath);
+            if (currentModel) {
+                currentModel.visible = false;
+            }
         }
 
-        loader.load(
-            path,
-            (gltf) => {
-                currentModel = gltf.scene;
-
-                // Remove any bounding box helpers or wireframes
-                currentModel.traverse((child) => {
-                    if (
-                        child instanceof THREE.Line ||
-                        child instanceof THREE.BoxHelper ||
-                        child.name.toLowerCase().includes('box') ||
-                        child.name.toLowerCase().includes('bounding') ||
-                        child.name.toLowerCase().includes('wireframe')
-                    ) {
-                        child.visible = false;
-                    }
-                });
-
-                // Reset rotation and scale
-                currentModel.rotation.set(0, 0, 0);
-                currentModel.scale.set(1, 1, 1);
-                currentModel.position.set(0, 0, 0);
-
-                // Choose centering method based on the model
-                if (
-                    path.includes('chanterelle') ||
-                    path.includes('porcini') ||
-                    path.includes('amanita')
-                ) {
-                    currentModel = centerModelMethod2(currentModel);
-                } else {
-                    currentModel = centerModelMethod1(currentModel);
-                }
-
-                scene.add(currentModel);
-            },
-            undefined,
-            (error) => {
-                console.error(`Error loading model from ${path}:`, error);
+        if (loadedModels.has(path)) {
+            const newModel = loadedModels.get(path);
+            if (newModel) {
+                newModel.visible = true;
+                currentModelPath = path;
             }
-        );
+        } else {
+            console.warn(`Model ${path} not yet loaded`);
+        }
     };
 
     const animate = () => {
         animationFrameId = requestAnimationFrame(animate);
 
-        if (currentModel) {
-            // Now it should rotate around the proper center
-            currentModel.rotation.y += 0.01;
+        if (currentModelPath && loadedModels.has(currentModelPath)) {
+            const currentModel = loadedModels.get(currentModelPath);
+            if (currentModel && currentModel.visible) {
+                currentModel.rotation.y += 0.01;
+            }
         }
 
         renderer.render(scene, camera);
@@ -177,6 +183,19 @@ export const useModelStore = defineStore('modelStore', () => {
         cancelAnimationFrame(animationFrameId);
         window.removeEventListener('resize', handleResize);
 
+        loadedModels.forEach((model) => {
+            model.traverse((child) => {
+                if (child instanceof THREE.Mesh) {
+                    child.geometry.dispose();
+                    if (Array.isArray(child.material)) {
+                        child.material.forEach((material) => material.dispose());
+                    } else {
+                        child.material.dispose();
+                    }
+                }
+            });
+        });
+
         if (renderer) {
             renderer.dispose();
         }
@@ -184,7 +203,8 @@ export const useModelStore = defineStore('modelStore', () => {
 
     return {
         initScene,
-        loadModel,
+        preloadAllModels,
+        switchToModel,
         animate,
         handleResize
     };
