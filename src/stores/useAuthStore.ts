@@ -16,7 +16,7 @@ import { computed, ref } from 'vue';
 import { db } from '@/firebase.ts';
 import firebase from 'firebase/compat/app';
 import router from '@/router';
-import { useAuthErrorHandler } from '@/composables/useAuthErrorHandler';
+import { useErrorHandler } from '@/composables/useErrorHandler.ts';
 import FieldValue = firebase.firestore.FieldValue;
 
 interface UserData {
@@ -29,7 +29,7 @@ interface UserData {
 }
 
 export const useAuthStore = defineStore('auth', () => {
-    const errorHandler = useAuthErrorHandler();
+    const errorHandler = useErrorHandler();
 
     const user = ref<User | null>(null);
     const userData = ref<UserData | null>(null);
@@ -118,7 +118,7 @@ export const useAuthStore = defineStore('auth', () => {
     };
 
     const register = async (email: string, password: string, fullName: string) => {
-        return errorHandler.handleAuthOperation(
+        return errorHandler.handleOperation(
             async () => {
                 const auth = getAuth();
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -144,13 +144,18 @@ export const useAuthStore = defineStore('auth', () => {
 
                 return userCredential;
             },
-            setLoading,
-            setError
+            {
+                loadingCallback: setLoading,
+                errorCallback: setError,
+                showToast: true,
+                toastSuccessMessage: 'Account created successfully!',
+                toastErrorMessage: 'Registration failed. Please try again.'
+            }
         );
     };
 
     const login = async (email: string, password: string) => {
-        return errorHandler.handleAuthOperation(
+        return errorHandler.handleOperation(
             async () => {
                 const auth = getAuth();
                 const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -166,13 +171,18 @@ export const useAuthStore = defineStore('auth', () => {
 
                 return userCredential;
             },
-            setLoading,
-            setError
+            {
+                loadingCallback: setLoading,
+                errorCallback: setError,
+                showToast: true,
+                toastSuccessMessage: 'Logged in successfully!',
+                toastErrorMessage: 'Login failed. Please try again.'
+            }
         );
     };
 
     const signInWithGoogle = async () => {
-        return errorHandler.handleAuthOperation(
+        return errorHandler.handleOperation(
             async () => {
                 const auth = getAuth();
                 const provider = new GoogleAuthProvider();
@@ -203,25 +213,35 @@ export const useAuthStore = defineStore('auth', () => {
 
                 return userCredential;
             },
-            setLoading,
-            setError
+            {
+                loadingCallback: setLoading,
+                errorCallback: setError,
+                showToast: true,
+                toastSuccessMessage: 'Logged in successfully with google!',
+                toastErrorMessage: 'Login failed. Please try again.'
+            }
         );
     };
 
     const resetPassword = async (email: string) => {
-        return errorHandler.handleAuthOperation(
+        return errorHandler.handleOperation(
             async () => {
                 const auth = getAuth();
                 await sendPasswordResetEmail(auth, email);
                 return { message: 'Reset email sent' };
             },
-            setLoading,
-            setError
+            {
+                loadingCallback: setLoading,
+                errorCallback: setError,
+                showToast: true,
+                toastSuccessMessage: 'Password reset successfully!',
+                toastErrorMessage: 'Password reset failed. Please try again.'
+            }
         );
     };
 
     const logout = async () => {
-        return errorHandler.handleAuthOperation(
+        return errorHandler.handleOperation(
             async () => {
                 const auth = getAuth();
                 await signOut(auth);
@@ -232,8 +252,13 @@ export const useAuthStore = defineStore('auth', () => {
 
                 return { message: 'Logged out successfully' };
             },
-            setLoading,
-            setError
+            {
+                loadingCallback: setLoading,
+                errorCallback: setError,
+                showToast: true,
+                toastSuccessMessage: 'Logged out successfully!',
+                toastErrorMessage: 'Logout failed. Please try again.'
+            }
         );
     };
 
@@ -253,10 +278,7 @@ export const useAuthStore = defineStore('auth', () => {
         const result = await login(form.value.email, form.value.password);
 
         if (result.success) {
-            errorHandler.showToast('Welcome back! Login successful.', 'success');
-            router.push('/homepage');
-        } else {
-            errorHandler.showToast(result.error || 'Login failed. Please try again.');
+            await router.push('/homepage');
         }
     };
 
@@ -266,10 +288,7 @@ export const useAuthStore = defineStore('auth', () => {
         const result = await signInWithGoogle();
 
         if (result.success) {
-            errorHandler.showToast('Successfully signed in with Google!', 'success');
-            router.push('/homepage');
-        } else {
-            errorHandler.showToast(result.error || 'Google sign-in failed.');
+            await router.push('/homepage');
         }
     };
 
@@ -285,10 +304,7 @@ export const useAuthStore = defineStore('auth', () => {
         const result = await register(form.value.email, form.value.password, form.value.fullName);
 
         if (result.success) {
-            errorHandler.showToast('Account created successfully! Welcome!', 'success');
-            router.push('/homepage');
-        } else {
-            errorHandler.showToast(result.error || 'Registration failed. Please try again.');
+            await router.push('/homepage');
         }
     };
 
@@ -304,11 +320,8 @@ export const useAuthStore = defineStore('auth', () => {
         const result = await resetPassword(form.value.email);
 
         if (result.success) {
-            errorHandler.showToast('Password reset link sent! Check your email.', 'success');
             form.value.email = '';
             setTimeout(() => router.push('/login'), 3000);
-        } else {
-            errorHandler.showToast(result.error || 'Failed to send reset link');
         }
     };
 
