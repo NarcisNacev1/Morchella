@@ -3,7 +3,7 @@ import Navbar from '@/components/NavBar.vue';
 import ProductShowcase from '@/components/ProductShowcase.vue';
 import ModelViewer from '@/components/ModelViewer.vue';
 import InfoCards from '@/components/InfoCards.vue';
-import { useHomePageStore } from '@/stores/homePageStore.ts';
+import { useHomePageStore } from '@/stores/useHomePageStore.ts';
 import InfoSection from '@/components/InfoSection.vue';
 import ProductsSection from '@/components/ProductsSection.vue';
 
@@ -125,8 +125,11 @@ const homePageStore = useHomePageStore();
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
     z-index: 5;
+    overflow: hidden;
+    position: relative;
+    max-width: 1920px;
+    max-height: 1100px;
 }
 
 .section-3 {
