@@ -40,7 +40,6 @@ export const useErrorHandler = () => {
             return getHttpErrorMessage(error.response.status);
         }
 
-        // Default error messages
         if (error?.message?.includes('network') || error?.message?.includes('Network')) {
             return 'Network error. Please check your connection.';
         }

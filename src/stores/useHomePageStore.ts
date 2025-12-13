@@ -28,90 +28,69 @@ export const useHomePageStore = defineStore('homePageStore', () => {
         }
     ]);
 
+    const getSections = () => {
+        const vh = window.innerHeight;
+        return [
+            0,
+            vh * 0.8,
+            vh * 1.8
+        ];
+    };
+
+    const getCurrentSection = () => {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const sections = getSections();
+
+        if (scrollTop >= (sections[2] ?? 0) - 50) return 2;
+        if (scrollTop >= (sections[1] ?? 0) - 50) return 1;
+        return 0;
+    };
+
+    const scrollToSection = (sectionIndex: number) => {
+        if (isAnimating.value) return;
+
+        const sections = getSections();
+        if (sectionIndex < 0 || sectionIndex >= sections.length) return;
+
+        isAnimating.value = true;
+
+        window.scrollTo({
+            top: sections[sectionIndex],
+            behavior: 'smooth'
+        });
+
+        setTimeout(() => {
+            isAnimating.value = false;
+        }, 1000);
+    };
+
     const handleProductChange = (modelPath: string) => {
         currentModelPath.value = modelPath;
-    };
-
-    const scrollToSection1 = () => {
-        if (isAnimating.value) return;
-        isAnimating.value = true;
-
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
-        });
-
-        setTimeout(() => {
-            isAnimating.value = false;
-        }, 1000);
-    };
-
-    const scrollToSection2 = () => {
-        if (isAnimating.value) return;
-        isAnimating.value = true;
-
-        window.scrollTo({
-            top: window.innerHeight * 0.8,
-            behavior: 'smooth'
-        });
-
-        setTimeout(() => {
-            isAnimating.value = false;
-        }, 1000);
-    };
-
-    const scrollToSection3 = () => {
-        if (isAnimating.value) return;
-        isAnimating.value = true;
-
-        window.scrollTo({
-            top: window.innerHeight + window.innerHeight * 0.5 - 100,
-            behavior: 'smooth'
-        });
-
-        setTimeout(() => {
-            isAnimating.value = false;
-        }, 1000);
     };
 
     const handleWheel = (event: WheelEvent) => {
         if (isAnimating.value) return;
 
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const viewportHeight = window.innerHeight;
+        const current = getCurrentSection();
+        const direction = event.deltaY > 0 ? 1 : -1;
+        const nextSection = current + direction;
 
-        if (event.deltaY > 0) {
-            if (scrollTop < viewportHeight * 0.1) {
-                event.preventDefault();
-                scrollToSection2();
-            } else if (scrollTop < viewportHeight * 0.8) {
-                event.preventDefault();
-                scrollToSection3();
-            }
-        } else if (event.deltaY < 0) {
-            if (scrollTop > viewportHeight * 1.2) {
-                event.preventDefault();
-                scrollToSection2();
-            } else if (scrollTop > viewportHeight * 0.3) {
-                event.preventDefault();
-                scrollToSection1();
-            }
+        // Only prevent default and snap if we're moving to a valid section
+        if (nextSection >= 0 && nextSection < getSections().length) {
+            event.preventDefault();
+            scrollToSection(nextSection);
         }
     };
 
     const handleKeydown = (event: KeyboardEvent) => {
         if (isAnimating.value) return;
+        if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
 
-        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        const viewportHeight = window.innerHeight;
+        event.preventDefault();
 
-        if (event.key === 'ArrowDown' && scrollTop < viewportHeight * 0.1) {
-            event.preventDefault();
-            scrollToSection2();
-        } else if (event.key === 'ArrowUp' && scrollTop > viewportHeight * 1.2) {
-            event.preventDefault();
-            scrollToSection1();
-        }
+        const current = getCurrentSection();
+        const direction = event.key === 'ArrowDown' ? 1 : -1;
+        scrollToSection(current + direction);
     };
 
     onMounted(() => {
@@ -128,8 +107,8 @@ export const useHomePageStore = defineStore('homePageStore', () => {
         handleProductChange,
         currentModelPath,
         mushrooms,
-        scrollToSection1,
-        scrollToSection2,
-        scrollToSection3
+        scrollToSection1: () => scrollToSection(0),
+        scrollToSection2: () => scrollToSection(1),
+        scrollToSection3: () => scrollToSection(2)
     };
 });

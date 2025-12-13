@@ -50,7 +50,6 @@ onUnmounted(() => {
 <template>
     <div class="section-2-content">
         <div class="content-layout">
-            <!-- Left side - Entire section fades in together -->
             <div class="left-content" :class="{ 'animate-in': isVisible }">
                 <div class="content-item" v-for="(item, index) in sectionData" :key="index">
                     <div class="divider-line" :style="{ animationDelay: `${index * 0.2}s` }"></div>
@@ -69,7 +68,6 @@ onUnmounted(() => {
                 ></div>
             </div>
 
-            <!-- Right side - Fades in after left side completes -->
             <div class="right-content" :class="{ 'animate-in': isVisible }">
                 <h2 class="right-title">Why Choose Our Mushrooms?</h2>
                 <p class="intro-text">
@@ -98,7 +96,6 @@ onUnmounted(() => {
     align-items: start;
 }
 
-/* Left side styles - Entire section animates together */
 .left-content {
     display: flex;
     flex-direction: column;
@@ -201,12 +198,11 @@ onUnmounted(() => {
     transform: translateX(0);
 }
 
-/* Right side styles - Fades in after left side */
 .right-content {
     padding-top: 0.5rem;
     opacity: 0;
     transform: translateY(30px);
-    transition: all 0.8s ease-out 1.2s; /* Delay to wait for left side */
+    transition: all 0.8s ease-out 1.2s;
 }
 
 .right-content.animate-in {

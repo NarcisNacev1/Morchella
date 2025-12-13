@@ -1,200 +1,239 @@
 <script lang="ts" setup>
-import { useProductsStore } from '@/stores/useProductsStore.ts';
-import { onMounted } from 'vue';
-import ProductBox from '../components/ProductBox.vue';
+import Products from '@/components/Products.vue';
+import { onMounted, ref } from 'vue';
 
-const productsStore = useProductsStore();
+const isVisible = ref(false);
+
+const checkVisibility = () => {
+    const element = document.querySelector('.intro-section');
+    if (element) {
+        const rect = element.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        if (rect.top < windowHeight * 0.8 && rect.bottom > 0) {
+            isVisible.value = true;
+        }
+    }
+};
 
 onMounted(() => {
-    productsStore.fetchAllProducts();
+    checkVisibility();
+    window.addEventListener('scroll', checkVisibility);
+
+    return () => {
+        window.removeEventListener('scroll', checkVisibility);
+    };
 });
 </script>
-
 <template>
-    <div class="section-3-content">
-        <h2>Our Mushroom Collection</h2>
-        <p>Wild-harvested, premium quality mushrooms</p>
+    <div class="intro-section">
+        <h2 class="products-title-left">PRODUCTS</h2>
 
-        <div v-if="productsStore.isLoading" class="loading">
-            <div class="spinner"></div>
-            <p>Harvesting mushrooms...</p>
-        </div>
-
-        <div v-else-if="productsStore.error" class="error">
-            <p>{{ productsStore.error }}</p>
-            <button @click="productsStore.fetchAllProducts()" class="retry-btn">Try Again</button>
-        </div>
-
-        <div v-else-if="productsStore.products.length > 0" class="products-grid">
-            <div class="grid-row">
-                <ProductBox
-                    v-for="(product, index) in productsStore.products.slice(0, 4)"
-                    :key="product.id"
-                    :image-url="product.imageUrl"
-                    :title="product.name"
-                    :has-right-border="index < 3"
-                    :has-bottom-border="true"
-                />
+        <div class="right-section">
+            <div class="intro-content">
+                <div class="intro-text" :class="{ 'animate-in': isVisible }">
+                    <h1 class="intro-title">Discover a wide array <br> of high-quality products at Morchella, tailored to meet your needs</h1>
+                    <p class="intro-description">
+                        Our dedicated team is committed to delivering top-tier products, ensuring
+                        each mushroom meets our rigorous standards of quality, sustainability, and flavor.
+                        From forest to table, we maintain the highest level of care in every step of our process.
+                    </p>
+                </div>
             </div>
-
-            <div class="grid-row">
-                <ProductBox
-                    v-for="(product, index) in productsStore.products.slice(4, 8)"
-                    :key="product.id"
-                    :image-url="product.imageUrl"
-                    :title="product.name"
-                    :has-right-border="index < 3"
-                    :has-bottom-border="index !== 1"
-                />
-            </div>
-        </div>
-
-        <div v-else class="empty-state">
-            <h3>No Mushrooms Available</h3>
-            <p>Check back soon for our mushroom collection!</p>
+            <Products />
         </div>
     </div>
 </template>
 
 <style scoped>
-.section-3-content {
-    padding: 2rem;
-    max-width: 1404px;
-    margin: 0 auto;
-    text-align: center;
-    background: transparent;
-}
-
-h2 {
-    font-size: 2rem;
-    color: #1A1A1A;
-    margin-bottom: 0.5rem;
-}
-
-.section-3-content > p {
-    color: #666;
-    margin-bottom: 2rem;
-    font-size: 1rem;
-}
-
-.products-grid {
-    background: transparent;
-    border: 2px solid #1A1A1A;
-}
-
-.grid-row {
+.intro-section {
+    position: relative;
+    min-height: 100vh;
     display: flex;
-    background: transparent;
+    justify-content: space-between;
+    gap: 4rem;
+    padding: 5.2rem 4rem 0 4rem;
+
 }
 
-.grid-row:first-child {
-    border-bottom: 2px solid #1A1A1A;
+.products-title-left {
+    font-size: 1rem;
+    color: #f5e9dd;
+    margin: 0;
+    padding: 2rem 0 0;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    line-height: 1;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+    top: 5.2rem;
+    height: fit-content;
+    text-align: left;
+    width: auto;
+    flex-shrink: 0;
 }
 
-.loading {
-    text-align: center;
-    padding: 3rem;
-    background: transparent;
+.right-section {
+    max-width: 79%;
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
 }
 
-.spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid #f5e9dd;
-    border-top-color: #1A1A1A;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto 1rem;
+.intro-content {
+    width: 100%;
 }
 
-@keyframes spin {
-    to { transform: rotate(360deg); }
+.intro-text {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: 0.2s;
 }
 
-.error {
-    text-align: center;
-    padding: 2rem;
-    background: transparent;
-    margin: 2rem 0;
+.intro-text.animate-in {
+    opacity: 1;
+    transform: translateY(0);
 }
 
-.error p {
-    color: #ef4444;
-    margin-bottom: 1rem;
+.intro-title {
+    font-size: 4rem;
+    width: 100%;
+    font-weight: 900;
+    color: #1A1A1A;
+    margin: 0 0 1.5rem 0;
+    line-height: 1.1;
+    padding-top: 1rem;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: left;
 }
 
-.retry-btn {
-    background: #1A1A1A;
-    color: white;
-    border: none;
-    padding: 0.5rem 1.5rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background 0.3s ease;
-}
-
-.retry-btn:hover {
-    background: #000;
-}
-
-.empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
-    background: transparent;
-}
-
-.empty-state h3 {
+.intro-description {
+    font-size: 1.125rem;
+    font-weight: 400;
+    width: 100%;
     color: #666;
-    margin-bottom: 0.5rem;
+    line-height: 1.8;
+    max-width: 730px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: 0.6s;
+    text-align: left;
 }
 
-.empty-state p {
-    color: #999;
+.intro-text.animate-in .intro-description {
+    opacity: 1;
+    transform: translateY(0);
 }
 
-@media (max-width: 1404px) {
-    .section-3-content {
-        max-width: 100%;
-        padding: 1rem;
-    }
-
-    .products-grid {
-        transform: scale(0.9);
-        transform-origin: center;
-    }
+.right-section > :deep(.products-component) {
+    width: 100%;
+    margin-top: 3rem;
 }
 
 @media (max-width: 1200px) {
-    .products-grid {
-        transform: scale(0.8);
-        transform-origin: center;
+    .intro-section {
+        padding: 5.2rem 3rem 0 3rem;
+        gap: 3rem;
+    }
+
+    .products-title-left {
+        font-size: 6rem;
+        top: 5.2rem;
+    }
+
+    .right-section {
+        max-width: 85%;
+    }
+
+    .intro-title {
+        font-size: 3.5rem;
     }
 }
 
-@media (max-width: 1000px) {
-    .products-grid {
-        transform: scale(0.7);
-        transform-origin: center;
+@media (max-width: 1024px) {
+    .intro-section {
+        padding: 4rem 2rem 0 2rem;
+        gap: 2rem;
+    }
+
+    .products-title-left {
+        font-size: 5rem;
+        top: 4rem;
+    }
+
+    .right-section {
+        max-width: 90%;
+    }
+
+    .intro-title {
+        font-size: 3rem;
     }
 }
 
-@media (max-width: 800px) {
-    .products-grid {
-        transform: scale(0.6);
-        transform-origin: center;
+@media (max-width: 768px) {
+    .intro-section {
+        flex-direction: column;
+        padding: 3rem 1.5rem 0 1.5rem;
+        gap: 1rem;
     }
-}
 
-@media (max-width: 600px) {
-    .section-3-content {
+    .products-title-left {
+        position: relative;
+        top: 0;
+        font-size: 3.5rem;
+        text-align: center;
+        width: 100%;
+        margin-bottom: 1rem;
+    }
+
+    .right-section {
         max-width: 100%;
-        padding: 0.5rem;
+        width: 100%;
     }
 
-    .products-grid {
-        transform: scale(0.5);
-        transform-origin: center;
+    .intro-title {
+        font-size: 2.5rem;
+        text-align: left;
+    }
+
+    .intro-description {
+        font-size: 1rem;
+        text-align: left;
+    }
+}
+
+@media (max-width: 480px) {
+    .intro-section {
+        padding: 2rem 1rem 0 1rem;
+    }
+
+    .products-title-left {
+        font-size: 2.5rem;
+    }
+
+    .intro-title {
+        font-size: 2rem;
+    }
+
+    .intro-description {
+        font-size: 0.95rem;
+    }
+}
+
+.intro-section + * {
+    animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.5s both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 </style>

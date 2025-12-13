@@ -133,11 +133,11 @@ const homePageStore = useHomePageStore();
 }
 
 .section-3 {
-    height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    height: 120vh;
+    width: 100%;
     position: relative;
+    max-width: 1920px;
+    max-height: 1170px;
 }
 
 .back-to-top span {
