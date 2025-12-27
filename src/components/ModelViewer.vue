@@ -86,7 +86,7 @@ watch(
     height: 1100px;
     background: transparent;
     position: absolute;
-    top: 52%;
+    top: 58%;
     left: 50%;
     animation: float 3s ease-in-out infinite;
     opacity: 1;

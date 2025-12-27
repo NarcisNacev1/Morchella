@@ -1,11 +1,8 @@
 Model Information:
-* title:	Mushroom
-* source:	https://sketchfab.com/3d-models/mushroom-52dada6fc6a740c784a1ff6cf27cb9e6
-* author:	lebeden (https://sketchfab.com/lebeden)
+* title:	Porcini Mushroom
+* source:	https://sketchfab.com/3d-models/porcini-mushroom-ce3f1e9d88cc486f84afe04faa1e2078
+* author:	vladlenfilimonov (https://sketchfab.com/vladlenfilimonov)
 
 Model License:
-* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
-* requirements:	Author must be credited. Commercial use is allowed.
-
-If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
-This work is based on "Mushroom" (https://sketchfab.com/3d-models/mushroom-52dada6fc6a740c784a1ff6cf27cb9e6) by lebeden (https://sketchfab.com/lebeden) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* license type:	SKETCHFAB Standard (https://sketchfab.com/licenses)
+* requirements:	Under basic restrictions, use worldwide, on all types of media, commercially or not, and in all types of derivative works
