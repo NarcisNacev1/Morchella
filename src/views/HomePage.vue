@@ -6,6 +6,7 @@ import InfoCards from '@/components/InfoCards.vue';
 import { useHomePageStore } from '@/stores/useHomePageStore.ts';
 import InfoSection from '@/components/InfoSection.vue';
 import ProductsSection from '@/components/ProductsSection.vue';
+import Footer from '@/components/Footer.vue';
 
 const homePageStore = useHomePageStore();
 </script>
@@ -39,6 +40,10 @@ const homePageStore = useHomePageStore();
 
         <div class="section section-3">
             <ProductsSection />
+        </div>
+
+        <div class="section section-4">
+            <Footer />
         </div>
     </div>
 </template>
@@ -133,13 +138,22 @@ const homePageStore = useHomePageStore();
 }
 
 .section-3 {
-    height: 120vh;
+    height: 60vh;
     width: 100%;
     position: relative;
     max-width: 1920px;
     max-height: 1170px;
 }
 
+.section-4 {
+    height: 100vh;
+    width: 100%;
+    position: relative;
+    max-width: 1920px;
+    max-height: 1170px;
+    display: flex;
+    align-items: flex-end;
+}
 .back-to-top span {
     font-size: 0.9rem;
     font-weight: 500;

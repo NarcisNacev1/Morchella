@@ -1,30 +1,3 @@
-<template>
-    <div class="product-showcase">
-        <div class="vertical-menu">
-            <div class="moving-arrow" :style="arrowStyle">
-                <i class="ti ti-arrow-narrow-right arrow-icon"></i>
-            </div>
-
-            <div
-                v-for="(product, index) in products"
-                :key="product.id"
-                class="menu-item"
-                :class="{ active: activeIndex === index }"
-            >
-                <div class="menu-content">
-                    <span class="product-name">{{ product.name }}</span>
-                </div>
-            </div>
-        </div>
-
-        <transition name="title-slide" mode="out-in">
-            <div class="title-display" :key="activeProduct?.id">
-                <h1 class="product-title">{{ activeProduct?.displayName || '' }}</h1>
-            </div>
-        </transition>
-    </div>
-</template>
-
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 
@@ -98,6 +71,33 @@ onUnmounted(() => {
     clearInterval(autoSwitchInterval);
 });
 </script>
+
+<template>
+    <div class="product-showcase">
+        <div class="vertical-menu">
+            <div class="moving-arrow" :style="arrowStyle">
+                <i class="ti ti-arrow-narrow-right arrow-icon"></i>
+            </div>
+
+            <div
+                v-for="(product, index) in products"
+                :key="product.id"
+                class="menu-item"
+                :class="{ active: activeIndex === index }"
+            >
+                <div class="menu-content">
+                    <span class="product-name">{{ product.name }}</span>
+                </div>
+            </div>
+        </div>
+
+        <transition name="title-slide" mode="out-in">
+            <div class="title-display" :key="activeProduct?.id">
+                <h1 class="product-title">{{ activeProduct?.displayName || '' }}</h1>
+            </div>
+        </transition>
+    </div>
+</template>
 
 <style scoped>
 .product-showcase {
