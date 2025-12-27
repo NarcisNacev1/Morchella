@@ -8,7 +8,7 @@ an immersive shopping experience with 3D product visualization.
 **Note:** This is an ongoing project. While core functionality is implemented, several features are still under
 development. The current version is hosted live at:
 
-🌐 **Live Demo:** [[https://morchella-7a59d.web.app](https://morchella-7a59d.web.app)](https://morchella-7a59d.web.app/homepage)
+🌐 **Live Demo:** [[https://morchella-7a59d.web.app](https://morchella-7a59d.web.app)]
 
 ## ✨ Features Implemented
 
